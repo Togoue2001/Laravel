@@ -20,10 +20,6 @@ jobs:
         php-version: '8.1' # Changez la version si nécessaire
         extensions: mbstring, xml, bcmath, sqlite3, mysql, curl
 
-    # - name: Installer les dépendances
-    #   run: |
-    #     composer install --prefer-dist --no-progress --no-suggest --no-interaction
-
     - name: Exécuter les tests
       run: |
         php artisan migrate --env=testing
