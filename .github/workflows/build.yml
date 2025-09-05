@@ -22,5 +22,4 @@ jobs:
 
     - name: Exécuter les tests
       run: |
-        php artisan migrate --env=testing
         php artisan test
