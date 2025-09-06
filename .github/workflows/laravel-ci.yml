@@ -1,0 +1,68 @@
+name: Laravel CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Vérifier le code
+      uses: actions/checkout@v2
+
+    - name: Installer PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, xml, bcmath, sqlite3, mysql, curl
+
+    - name: Installer Composer
+      run: |
+        curl -sS https://getcomposer.org/installer | php
+        mv composer.phar /usr/local/bin/composer
+
+    - name: Installer les dépendances
+      run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+    - name: Configurer l'environnement
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+        php artisan migrate --env=testing --force
+
+    - name: Exécuter les tests
+      run: php artisan test
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Vérifier le code
+      uses: actions/checkout@v2
+
+    - name: Installer PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, xml, bcmath, sqlite3, mysql, curl
+
+    - name: Installer Composer
+      run: |
+        php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+        php composer-setup.php --install-dir=C:\ProgramData\ComposerSetup\bin --filename=composer
+        php -r "unlink('composer-setup.php');"
+
+    - name: Installer les dépendances
+      run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+    - name: Configurer l'environnement
+      run: |
+        copy .env.example .env
+        php artisan key:generate
+        php artisan migrate --env=testing --force
+
+    - name: Exécuter les tests
+      run: php artisan test
